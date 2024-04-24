@@ -231,6 +231,8 @@ class DocumentManagerGUI:
         selected_items = self.tree.selection()  # get selection
         if selected_items:  # check if an item is selected
             if len(selected_items) == 1:
+                item_values = self.tree.item(selected_items, "values")
+                document_name = item_values[0]
                 message_text = f"Sind Sie sicher, dass Sie das Dokument '{document_name}' loeschen wollen?"
             else:
                 message_text = f"Sind Sie sicher, dass Sie diese {len(selected_items)} Einträge löschen möchten?"
@@ -238,11 +240,11 @@ class DocumentManagerGUI:
             response = messagebox.askyesno("Löschen bestätigen", message_text)
             if response:
                 for item in selected_items:
-                    item_values = self.tree.item(selected_items, "values")
+                    item_values = self.tree.item(item, "values")
                     document_name = item_values[0]
                     document_link = item_values[4]
                     database.delete_by_link(document_link)
-                    self.tree.delete(selected_items)
+                    self.tree.delete(item)
                 self.load_and_display_documents()
         else:
             messagebox.showinfo("Hinweis", "Kein Dokument zum Loeschen ausgewaehlt.")
@@ -730,4 +732,3 @@ class DocumentManagerGUI:
                 subprocess.run(['xdg-open', path])
         except Exception as e:
             messagebox.showerror("Fehler", f"Ein Fehler ist aufgetreten: {e}")
-
